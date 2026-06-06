@@ -5,8 +5,8 @@ CREATE TABLE questions (
   active        BOOLEAN      NOT NULL DEFAULT true
 );
 
-INSERT INTO questions (attraction_id, question, display_order) VALUES 
-(1, 'O sensor de fluxo de água está funcionando corretamente?', 1),
-(1, 'As juntas do tobogã estão lisas e sem frestas?',           2),
-(2, 'O gerador de ondas está operando sem ruídos anormais?',   1),
-(2, 'Os botões de parada de emergência estão acessíveis e funcionando?', 2);
+INSERT INTO questions (attraction_id, question) VALUES 
+(1, 'O sensor de fluxo de água está funcionando corretamente?'),
+(1, 'As juntas do tobogã estão lisas e sem frestas?'),
+(2, 'O gerador de ondas está operando sem ruídos anormais?'),
+(2, 'Os botões de parada de emergência estão acessíveis e funcionando?');

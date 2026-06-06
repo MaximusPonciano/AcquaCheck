@@ -3,7 +3,6 @@ CREATE TABLE checklist_items (
   checklist_id INTEGER NOT NULL REFERENCES checklists(id),
   question_id  INTEGER NOT NULL REFERENCES questions(id),
   compliant    BOOLEAN NOT NULL,
-  notes        TEXT,
 
   CONSTRAINT uq_checklist_question UNIQUE (checklist_id, question_id)
 );

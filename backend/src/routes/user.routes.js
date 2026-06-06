@@ -1,9 +1,11 @@
 import express from "express";
-import ListUserController from "../controllers/UserApi/ListUserController.js";
-import authenticator from "../middlewares/auth.middleware.js";
+import ListUserController from "../app/controllers/UserApi/ListUserController.js";
+import authenticator from "../app/middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/",authenticator, ListUserController);
+router.use(authenticator);
+
+router.get("/", ListUserController);
 
 export default router;

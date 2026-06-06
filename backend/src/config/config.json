@@ -8,9 +8,10 @@
   },
   "api": {
     "prefixAuth": "/auth",
-    "prefixUser": "/user",
+    "prefixUser": "/users",
+    "prefixAttraction": "/attractions",
+    "prefixQuestion": "/questions",
     "prefixChecklist": "/checklists",
-    "prefixAtracao": "/atracao",
-    "prefixPergunta": "/pergunta"
+    "prefixChecklistItem": "/checklist-items"
   }
 }

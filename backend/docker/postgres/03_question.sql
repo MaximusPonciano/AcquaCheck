@@ -1,9 +1,9 @@
 CREATE TABLE questions (
-  id SERIAL PRIMARY KEY,
-  attraction_id INTEGER REFERENCES attractions(id),
-  question VARCHAR(100)
+  id            SERIAL PRIMARY KEY,
+  attraction_id INTEGER      NOT NULL REFERENCES attractions(id),
+  question      VARCHAR(255) NOT NULL,
+  active        BOOLEAN      NOT NULL DEFAULT true
 );
-
 
 INSERT INTO questions (attraction_id, question) VALUES 
 (1, 'O sensor de fluxo de água está funcionando corretamente?'),

@@ -26,6 +26,14 @@ services:
     networks:
       - acquacheck_network
 
+  redis_cache:
+    image: redis:alpine
+    container_name: redis_acquacheck_container
+    restart: always
+    networks:
+      - acquacheck_network
+
+
   nginx:
     image: nginx:alpine
     container_name: nginx_acquacheck_container

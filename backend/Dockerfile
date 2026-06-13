@@ -1,6 +1,16 @@
-FROM node:24-alpine
+FROM node:24-alpine AS builder
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+FROM node:24-alpine AS runner
+ENV NODE_ENV=production
+WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/package*.json ./
+RUN npm install --omit=dev
+COPY --from=builder /usr/src/app/src ./src
+COPY --from=builder /usr/src/app/server.js ./server.js
+USER node
+EXPOSE 3000
 CMD ["npm", "start"]

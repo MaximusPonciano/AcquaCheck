@@ -1,0 +1,29 @@
+# Controle de Versão
+.git
+.gitignore
+
+# Dependências do Node.js (Serão instaladas dentro do container, NÃO copie da máquina local)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Arquivos sensíveis
+.env
+.env.*
+
+# Arquivos do Docker (Não precisam ir para dentro da imagem final)
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Arquivos de Documentação e Testes (Garantindo que a imagem seja leve)
+README.md
+docs/
+test/
+tests/
+coverage/
+
+# IDEs
+.vscode/
+.idea/
+.cursor

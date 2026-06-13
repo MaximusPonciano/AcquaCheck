@@ -1,6 +1,6 @@
 services:
-  db_aquasafe:
-    image: postgres:15-alpine
+  db_acquacheck:
+    image: postgres:17-alpine
     container_name: db_acquacheck_container
     restart: always
     env_file:
@@ -10,6 +10,37 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/docker/postgres:/docker-entrypoint-initdb.d
+    networks:
+      - acquacheck_network
+
+  backend:
+    build: ./backend
+    container_name: backend_acquacheck_container
+    restart: always
+    env_file:
+      - ./backend/.env
+    expose:
+      - "3000"
+    depends_on:
+      - db_acquacheck
+    networks:
+      - acquacheck_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_acquacheck_container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    networks:
+      - acquacheck_network
 
 volumes:
   postgres_data:
+
+networks:
+  acquacheck_network:
+    driver: bridge

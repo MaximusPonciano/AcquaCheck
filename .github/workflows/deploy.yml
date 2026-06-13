@@ -16,6 +16,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
 
         uses: docker/login-action@v2
@@ -25,8 +28,10 @@ jobs:
 
       - name: Build and Push Docker Image
 
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/acquacheck-backend:latest
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/acquacheck-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/acquacheck-backend:${{ github.sha }}

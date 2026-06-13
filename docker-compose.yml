@@ -5,8 +5,6 @@ services:
     restart: always
     env_file:
       - ./backend/.env
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/docker/postgres:/docker-entrypoint-initdb.d
@@ -32,6 +30,8 @@ services:
     restart: always
     networks:
       - acquacheck_network
+    volumes:
+      - redis_data:/data
 
 
   nginx:
@@ -48,6 +48,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   acquacheck_network:

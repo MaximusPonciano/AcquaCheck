@@ -10,19 +10,46 @@ services:
       - ./backend/docker/postgres:/docker-entrypoint-initdb.d
     networks:
       - acquacheck_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
     build: ./backend
-    container_name: backend_acquacheck_container
     restart: always
     env_file:
       - ./backend/.env
     expose:
       - "3000"
     depends_on:
-      - db_acquacheck
+      db_acquacheck:
+        condition: service_healthy
     networks:
       - acquacheck_network
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.10'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis_cache:
     image: redis:alpine
@@ -32,7 +59,15 @@ services:
       - acquacheck_network
     volumes:
       - redis_data:/data
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 
   nginx:
     image: nginx:alpine
@@ -45,6 +80,10 @@ services:
       - backend
     networks:
       - acquacheck_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
 
 volumes:
   postgres_data:

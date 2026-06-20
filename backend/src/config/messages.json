@@ -10,7 +10,8 @@
       "userNotFound": "Usuário não encontrado",
       "invalidPassword": "Senha incorreta",
       "noToken": "Usuário não autenticado",
-      "invalidToken": "Token inválido"
+      "invalidToken": "Token inválido",
+      "accessDenied": "Acesso Negado: Ação restrita a Administradores"
     }
   },
   "user": {
@@ -28,6 +29,7 @@
   "attraction": {
     "error": {
       "requiredName": "Nome da atração é obrigatório",
+      "nameInUse": "Já existe uma atração com este nome",
       "notFound": "Atração não encontrada",
       "fetchError": "Falha ao buscar atração",
       "createError": "Erro ao criar atração",

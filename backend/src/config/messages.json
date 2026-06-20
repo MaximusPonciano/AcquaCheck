@@ -1,7 +1,8 @@
 {
   "common": {
     "error": {
-      "serverError": "Erro inesperado no servidor"
+      "serverError": "Erro inesperado no servidor",
+      "routeNotFound": "Rota não encontrada."
     }
   },
   "auth": {

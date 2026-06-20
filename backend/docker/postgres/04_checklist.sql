@@ -6,5 +6,5 @@ CREATE TABLE checklists (
   notes         TEXT
 );
 
-INSERT INTO checklists (user_id, attraction_id, date_time, notes) VALUES 
+INSERT INTO checklists (user_id, attraction_id, notes) VALUES 
 (1, 1, 'Inspeção matinal de rotina realizada com sucesso. Tudo pronto para abertura.');

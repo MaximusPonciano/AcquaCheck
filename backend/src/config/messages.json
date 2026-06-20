@@ -58,6 +58,7 @@
   "question": {
     "error": {
       "requiredText": "Texto da pergunta é obrigatório",
+      "questionInUse": "Esta pergunta já existe para esta atração",
       "notFound": "Pergunta não encontrada",
       "fetchError": "Falha ao buscar pergunta",
       "createError": "Erro ao criar pergunta",

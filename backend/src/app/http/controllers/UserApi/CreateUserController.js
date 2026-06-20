@@ -6,7 +6,8 @@ import "dotenv/config";
 
 export default async function CreateUserController (req, res){
     try{
-        const {name, email, passoword} = req.body;
+        let error = [];
+        const {name, email, password} = req.body;
         if (!name) {
             error.push("name obrigatório!");
         }
@@ -20,9 +21,13 @@ export default async function CreateUserController (req, res){
         }
 
         if (error.length > 0) {
-            return response.status(400).json({ error: error });
+            return res.status(400).json({ error: error });
         }
+        
+        // TODO: continuar com a criação do usuário
+        return res.status(201).json({ message: "Usuário criado com sucesso!" });
+
+    } catch (err) {
+        return res.status(500).json({ error: "Erro interno do servidor" });
     }
-
-
 }

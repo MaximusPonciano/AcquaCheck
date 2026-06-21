@@ -46,6 +46,7 @@
       "requiredAttraction": "Atração é obrigatória",
       "requiredItems": "É obrigatório enviar pelo menos uma resposta no checklist.",
       "invalidQuestions": "Uma ou mais perguntas enviadas não pertencem a esta atração.",
+      "expiredUpdate": "Não é permitido alterar um checklist após 24 horas da sua criação.",
       "notFound": "Checklist não encontrado",
       "fetchError": "Falha ao buscar checklist",
       "createError": "Erro ao criar checklist",

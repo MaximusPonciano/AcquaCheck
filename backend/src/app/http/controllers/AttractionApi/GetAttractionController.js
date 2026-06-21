@@ -1,11 +1,19 @@
 import Attraction from "../../../model/Attraction.js";
+import Question from "../../../model/Question.js";
 import { messages } from "../../../../config/constants.js";
 
 export default async function GetAttractionController(req, res) {
   try {
     const { id } = req.params;
     const attraction = await Attraction.findByPk(id, {
-      attributes: ["id", "name", "active"]
+      attributes: ["id", "name", "active"],
+      include: [
+        {
+          model: Question,
+          as: "questions", // Nome da relação definida em relations.js
+          attributes: ["id", "question"],
+        }
+      ]
     });
     
     if (!attraction) {

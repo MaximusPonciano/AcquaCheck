@@ -1,124 +1,116 @@
-# AcquaCheck - Sistema de Gestão e Inspeção 🌊
+# AcquaCheck API
 
-**Descrição:** O AcquaCheck é uma plataforma corporativa para registro, monitoramento e acompanhamento de listas de checagem (checklists) diárias de segurança em atrações de parques aquáticos.
-**Caminho Arquitetural Escolhido:** **Opção A (Docker/Orquestração Local)**.
-
----
-
-## 2. Pré-requisitos
-
-Para rodar este ecossistema na sua máquina, você precisará ter instalado:
-
-- **Ambiente Linux/WSL2** (Para usuários Windows).
-- **Docker Engine & Docker Compose** (ou Docker Desktop).
-- **Git** (Para clonar e versionar o repositório).
-- Conta no **Docker Hub** (Apenas se quiser testar o pipeline de CI/CD manualmente).
+O **AcquaCheck** é uma API RESTful desenvolvida em Node.js para a gestão e inspeção de parques aquáticos. O sistema permite o gerenciamento completo de checklists de segurança e atrações, operando sob rigorosos padrões de arquitetura e infraestrutura conteinerizada.
 
 ---
 
-## 3. Guia de Instalação e Execução ("How to Up")
+## 🛠️ Tecnologias Utilizadas
 
-Subir a infraestrutura completa do AcquaCheck é um processo de comando único, garantindo o isolamento total da aplicação.
+A aplicação backend foi desenhada para atender (e superar) os requisitos técnicos de desenvolvimento web moderno:
 
-1. Clone o repositório e acesse a pasta raiz:
-
-   ```bash
-   git clone <url-do-seu-repositorio>
-   cd AcquaCheck
-   ```
-
-2. Crie o seu arquivo de segredos locais (veja a seção de Gestão de Segredos):
-
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-
-3. Construa as imagens otimizadas e suba a Stack em modo "detached" (segundo plano):
-
-   ```bash
-   docker-compose up -d --build
-   ```
-
-4. Verifique se os 5 containers (2 réplicas do App, DB, Cache e Nginx) estão rodando e saudáveis:
-   ```bash
-   docker ps
-   ```
+- **Plataforma:** Node.js v24+
+- **Servidor HTTP:** Express
+- **Banco de Dados:** PostgreSQL 17+
+- **ORM:** Sequelize (com driver pg)
+- **Autenticação:** JWT (JSON Web Tokens) com senhas encriptadas via `bcryptjs`
+- **Controle de Sessão Avançado:** Redis (Blacklist de Tokens de Logout)
+- **Documentação:** Swagger (`swagger-ui-express`)
+- **Infraestrutura:** Docker e Docker Compose
 
 ---
 
-## 4. Detalhamento Técnico da Infraestrutura
+## Arquitetura do Sistema e Containers
 
-### 4.1 Otimização de Imagens (Dockerfile)
+A aplicação roda em um ambiente completamente conteinerizado, respeitando o princípio de isolamento e segurança perimetral. A arquitetura segue o fluxo restrito:
 
-O `backend/Dockerfile` foi arquitetado utilizando o padrão **Multi-stage Build**.
+**`Host -> Nginx -> Node Web Server -> PostgreSQL`**
 
-- **Stage 1 (Builder):** Baixa o Node.js Alpine, otimiza o _Layer Caching_ copiando apenas o `package.json` primeiro, e instala todas as dependências (incluindo as de dev).
-- **Stage 2 (Runner):** Gera uma imagem final enxuta, copiando apenas as dependências de produção (`npm install --omit=dev && npm cache clean --force`) e o código-fonte puro.
-- **Isolamento de Lixo e Segurança:** Utilizamos um `.dockerignore` rigoroso. Além disso, os artefatos são copiados definindo permissões explícitas (`--chown=node:node`).
-- **Gestão de Sinais (PID 1):** Evitamos o uso de `npm start`. O arquivo utiliza `CMD ["node", "server.js"]` para garantir que o processo receba os sinais de SO (`SIGTERM`) e encerre graciosamente (Graceful Shutdown).
+O servidor Node.js é **privado**, sem acesso direto pelo host. O tráfego externo passa única e exclusivamente pelo Nginx, que atua como Proxy Reverso.
 
-### 4.2 Persistência de Dados
+### Containers em Operação (`docker-compose.yml`):
 
-Abandonamos o uso efêmero de contêineres para o banco de dados. Utilizamos **Named Volumes** (`postgres_data`) acoplados ao container `db_acquacheck`. Isso garante que caso o container sofra restart, falha ou seja apagado (`docker rm`), os registros das inspeções e tabelas permaneçam intactos no disco local do Docker.
-
-### 4.3 Rede e Comunicação (Ponte Inteligente)
-
-Criamos a **Custom Bridge Network** chamada `acquacheck_network`.
-
-- **DNS Interno Nativo:** É estritamente proibido o uso de IPs estáticos no nosso `.env`. O backend Node.js se conecta ao banco chamando-o pelo host `db_acquacheck` e ao cache pelo host `redis_cache`. O Service Discovery do Docker resolve a comunicação.
-- **Isolamento Perimetral:** As portas 5432 (Banco) e 3000 (Node) funcionam apenas dentro da rede isolada. O mundo exterior só consegue se comunicar com a nossa aplicação através da porta 80 via Nginx (Proxy Reverso).
-
-### 4.4 Segurança e Imutabilidade
-
-- Os containers, especialmente o Node.js, rodam utilizando um usuário sem privilégios (`USER node` no Dockerfile), em vez de root, seguindo o Princípio do Menor Privilégio.
-- O código injetado dentro da imagem de produção é tratado como um **Template Imutável** (Read-Only na perspectiva de negócio). Alterações de código não refletem dentro do container sem um novo build, garantindo a integridade do artefato.
-
-### 4.5 Resiliência e Alta Disponibilidade (Production-Grade)
-
-Para garantir que a infraestrutura se comporte como um ambiente de produção (SRE/DevOps), implementamos:
-- **Healthchecks Integrados:** O backend só sobe quando o `db_acquacheck` e o `redis_cache` relatam que estão efetivamente saudáveis (`condition: service_healthy`), evitando crashes no boot.
-- **Escalabilidade (Réplicas):** Utilizamos a arquitetura de **Stack**, definindo `replicas: 2` para o backend. O Nginx faz o balanceamento de carga nativo distribuindo o tráfego.
-- **Limites de Recursos:** Os contêineres possuem `resources.limits` restritos de CPU e Memória, blindando a máquina Host contra vazamentos.
-- **Log Rotation:** Foi configurada rotação de logs (`max-size: 10m` e `max-file: 3`) para impedir que o disco da máquina lote com arquivos `.log` do Docker.
+1. **`db_acquacheck`**: Container rodando a imagem oficial do PostgreSQL 17 (Armazenamento de dados transacionais).
+2. **`redis_cache`**: Container rodando o Redis (Usado pelo Middleware de Segurança para armazenar a _Blacklist_ de JWTs após o logout).
+3. **`backend`**: Cluster rodando as réplicas do Node.js Web Server (Onde a API reside).
+4. **`nginx`**: Container proxy-reverso escutando a porta 80 e roteando para o Web Server.
+5. **`cli`**: Container utilitário configurado como _entrypoint_ (CLI Node.js) exclusivo para a execução de tarefas administrativas, como rodar migrations e seeds.
 
 ---
 
-## 5. Gestão de Segredos e Configurações
+## Como Funciona o Servidor (PASSO A PASSO OBRIGATÓRIO)
 
-**Aviso Crítico:** Nunca comite senhas, tokens JWT ou chaves de banco de dados no repositório. O `.gitignore` foi configurado para bloquear qualquer arquivo `.env*`.
+Para subir toda a infraestrutura da API do absoluto zero, siga as instruções abaixo rigorosamente:
 
-Para configurar a aplicação, nós fornecemos o arquivo de modelo `backend/.env.example`.
-O avaliador deve duplicar esse arquivo, renomeá-lo para `.env` e preencher as senhas locais antes de subir a stack. O Docker Compose está instruído a ler essas credenciais em tempo de execução via diretiva `env_file`.
+### 1. Configurando os Segredos
 
----
+Antes de rodar a aplicação, você precisa definir as variáveis de ambiente base:
 
-## 6. Evidências de Funcionamento e Verificação
+1. Navegue até a pasta `backend/`.
+2. Renomeie (ou duplique) o arquivo `.env.example` para `.env`.
+3. Mantenha as configurações padrões que já estão lá. Elas coincidem com as credenciais que o Docker Compose criará.
 
-Comandos para o Avaliador auditar a infraestrutura:
+### 2. Subindo a Arquitetura
 
-- **Resolução DNS e Isolamento de Rede:**
-  ```bash
-  docker inspect acquacheck_network
-  ```
-- **Verificar os logs de arranque seguro do banco e da aplicação:**
-  ```bash
-  docker-compose logs -f
-  ```
-- **Acessar a aplicação rodando com sucesso na porta 80 via Nginx:**
-  Navegue para [http://localhost](http://localhost) ou [http://localhost/api/](http://localhost/api/)
-
----
-
-## 7. Troubleshooting e Limpeza
-
-**Problema Comum:** "A porta 5432 ou 80 já está em uso na minha máquina."
-**Solução:** Derrube serviços locais conflitantes (como um Postgres rodando direto no Windows) ou altere a porta exposta no `docker-compose.yml` (ex: `"5433:5432"`).
-
-**Como Destruir o Ambiente (Limpeza)**
-Para apagar todos os containers, redes personalizadas e **destruir permanentemente o banco de dados** para evitar custos ou sujeira na máquina pós-avaliação:
+Na **raiz do projeto**, execute o comando oficial de subida:
 
 ```bash
-docker-compose down -v
+docker-compose up -d --build
 ```
 
-_(Remova a flag `-v` caso queira desligar a stack mas manter os dados salvos)._
+> _(Caso você utilize a sintaxe nova do docker, o comando `docker compose up --build` também funcionará com perfeição)._
+
+Este comando irá compilar a imagem Node.js otimizada e instanciar toda a topologia de rede e os bancos de dados em segundo plano.
+
+### 3. Migrations Automáticas vs Manuais
+
+No AcquaCheck, programamos o backend para executar automaticamente as migrations e os seeders ao subir o contêiner pela primeira vez. Entretanto, caso queira executá-los **manualmente** pelo nosso entrypoint de command line (CLI), o comando documentado é:
+
+```bash
+docker-compose run --rm cli migrate
+```
+
+**Outros comandos CLI disponíveis:**
+
+- `docker-compose run --rm cli migrate:undo` (Desfaz a última migration)
+- `docker-compose run --rm cli seed` (Popula a base com o admin)
+
+---
+
+## Modelagem, CRUD e Autenticação
+
+A arquitetura do banco suporta a regra de negócios via Sequelize e contempla o mínimo de 4 tabelas, incluindo uma relação "Muitos-para-Muitos" (N:N) com sua respectiva tabela pivô (todas com Models independentes).
+
+Temos as rotas completas de **CRUD (Create, Read, Update, Delete)** cobrindo as 5 manipulações básicas para as entidades.
+
+### Como Logar e Usar o Token JWT
+
+Quase todas as rotas da aplicação são protegidas por autenticação.
+
+1. **Faça o Login:**
+   Envie um `POST` para `http://localhost/api/login` (ou pela interface do Swagger) contendo o payload:
+   ```json
+   {
+     "email": "admin@acquacheck.com",
+     "password": "SUA_SENHA_AQUI"
+   }
+   ```
+2. **Capture o Token JWT:**
+   A resposta HTTP será um JSON contendo a propriedade `token`.
+3. **Use o Token nas Requisições Seguintes:**
+   Para acessar rotas privadas, injete o token no cabeçalho (_Header_) `Authorization` utilizando o formato Bearer:
+   ```http
+   Authorization: Bearer <SEU_TOKEN_JWT_AQUI>
+   ```
+
+_Nosso sistema também possui um **Middleware customizado** altamente robusto: ao fazer logout (`POST /logout`), o token utilizado é capturado, e o tempo de expiração (`exp`) restante é calculado com precisão e injetado no Redis. O middleware intercepta conexões bloqueando instantaneamente qualquer token que esteja nessa Blacklist._
+
+---
+
+## Documentação (Swagger & Postman)
+
+Documentamos toda a API visualmente, permitindo explorar o CRUD completo (List, Get, Create, Update, Delete) de cada entidade.
+
+- **Rota da Documentação Swagger (Obrigatória):**  
+  Acesse no seu navegador: **`http://localhost/api/api-docs/`**
+- **Postman Collection (Bônus):**
+  Na pasta `postman/` deste repositório encontra-se o arquivo `AcquaCheck_API.postman_collection.json`. Você pode importá-lo diretamente no Postman ou Insomnia para ter acesso imediato a todas as requisições configuradas.

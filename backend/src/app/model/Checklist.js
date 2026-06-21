@@ -33,7 +33,9 @@ const Checklist = sequelize.define(
   },
   {
     tableName: "checklists",
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,
+    deletedAt: "deleted_at",
   },
 );
 

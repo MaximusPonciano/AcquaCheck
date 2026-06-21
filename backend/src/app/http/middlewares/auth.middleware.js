@@ -25,6 +25,7 @@ export default async function authenticator(req, res, next) {
 
     next();
   } catch (error) {
+    console.log(error)
     return res.status(401).json({ message: messages.auth.error.invalidToken });
   }
 }

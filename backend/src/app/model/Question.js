@@ -16,13 +16,19 @@ const Question = sequelize.define(
       references: { model: "attractions", key: "id" },
     },
     question: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {
     tableName: "questions",
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,
+    deletedAt: "deleted_at",
   },
 );
 

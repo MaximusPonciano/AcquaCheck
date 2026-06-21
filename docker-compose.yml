@@ -7,7 +7,6 @@ services:
       - ./backend/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/docker/postgres:/docker-entrypoint-initdb.d
     networks:
       - acquacheck_network
     healthcheck:
@@ -50,6 +49,22 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+  cli:
+    build: ./backend
+    container_name: cli_acquacheck_container
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
+    entrypoint: ["node", "src/command.js"]
+    depends_on:
+      db_acquacheck:
+        condition: service_healthy
+    networks:
+      - acquacheck_network
+    profiles:
+      - tools
 
   redis_cache:
     image: redis:alpine

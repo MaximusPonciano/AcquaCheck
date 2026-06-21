@@ -18,13 +18,11 @@ export default async function CreateQuestionController(req, res) {
       return res.status(400).json({ errors });
     }
 
-    // Verifica se a atração realmente existe
     const attraction = await Attraction.findByPk(attractionId);
     if (!attraction) {
       return res.status(404).json({ message: messages.attraction.error.notFound });
     }
 
-    // Verifica se ESSA pergunta já existe para ESSA atração
     const existing = await Question.findOne({ where: { question, attractionId } });
     if (existing) {
       return res.status(409).json({ message: messages.question.error.questionInUse });

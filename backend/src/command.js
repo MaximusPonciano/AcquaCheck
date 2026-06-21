@@ -3,7 +3,7 @@ import { execSync } from "child_process";
 
 const command = process.argv[2];
 
-const args = "--config src/config/config.cjs --migrations-path src/database/migrations --seeders-path src/database/seeders --models-path src/app/model";
+const args = "--config src/config/config.cjs --migrations-path src/database/migrations --seeders-path src/database/migrations/seeders --models-path src/app/model";
 
 const commands = {
   "migrate": `npx --yes sequelize-cli db:migrate ${args} --env development`,

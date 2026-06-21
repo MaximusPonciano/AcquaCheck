@@ -3,11 +3,13 @@ import { execSync } from "child_process";
 
 const command = process.argv[2];
 
+const args = "--config src/config/config.cjs --migrations-path src/database/migrations --seeders-path src/database/seeders --models-path src/app/model";
+
 const commands = {
-  "migrate": "npx sequelize-cli db:migrate",
-  "migrate:undo": "npx sequelize-cli db:migrate:undo:all",
-  "seed": "npx sequelize-cli db:seed:all",
-  "seed:undo": "npx sequelize-cli db:seed:undo:all",
+  "migrate": `npx --yes sequelize-cli db:migrate ${args} --env development`,
+  "migrate:undo": `npx --yes sequelize-cli db:migrate:undo:all ${args} --env development`,
+  "seed": `npx --yes sequelize-cli db:seed:all ${args} --env development`,
+  "seed:undo": `npx --yes sequelize-cli db:seed:undo:all ${args} --env development`,
 };
 
 if (!command || !commands[command]) {

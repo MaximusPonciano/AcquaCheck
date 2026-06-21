@@ -20,7 +20,9 @@ const Attraction = sequelize.define(
   },
   {
     tableName: "attractions",
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,
+    deletedAt: "deleted_at",
   },
 );
 

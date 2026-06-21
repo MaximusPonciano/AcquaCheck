@@ -11,7 +11,15 @@
       "invalidPassword": "Senha incorreta",
       "noToken": "Usuário não autenticado",
       "invalidToken": "Token inválido",
-      "accessDenied": "Acesso Negado: Ação restrita a Administradores"
+      "accessDenied": "Acesso Negado: Ação restrita a Administradores",
+      "requiredEmailPassword": "Email e Senha são obrigatórios",
+      "missingToken": "Token não fornecido",
+      "blacklistedToken": "Token inválido ou expirado (Logout efetuado)",
+      "loginError": "Erro interno do servidor ao tentar fazer login",
+      "logoutError": "Erro interno do servidor ao tentar fazer logout"
+    },
+    "success": {
+      "loggedOut": "Logout realizado com sucesso"
     }
   },
   "user": {

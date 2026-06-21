@@ -44,6 +44,8 @@
   "checklist": {
     "error": {
       "requiredAttraction": "Atração é obrigatória",
+      "requiredItems": "É obrigatório enviar pelo menos uma resposta no checklist.",
+      "invalidQuestions": "Uma ou mais perguntas enviadas não pertencem a esta atração.",
       "notFound": "Checklist não encontrado",
       "fetchError": "Falha ao buscar checklist",
       "createError": "Erro ao criar checklist",

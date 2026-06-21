@@ -1,7 +1,7 @@
 import express from "express";
 import ListChecklistController from "../app/http/controllers/Checklists/ListChecklistController.js";
 import GetChecklistController from "../app/http/controllers/Checklists/GetChecklistController.js";  
-
+import CreateChecklistController from "../app/http/controllers/Checklists/CreateChecklistController.js";
 
 import authenticator from "../app/http/middlewares/auth.middleware.js";
 
@@ -11,5 +11,6 @@ router.use(authenticator);
 
 router.get("/", ListChecklistController);
 router.get("/:id", GetChecklistController);
+router.post("/", CreateChecklistController);
 
 export default router;

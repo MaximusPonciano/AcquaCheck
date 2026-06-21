@@ -35,5 +35,19 @@ export default {
         }
       }
     }
+  },
+  "/logout": {
+    "post": {
+      "summary": "Realiza o logout (Invalida o token JWT)",
+      "tags": ["Auth"],
+      "responses": {
+        "200": {
+          "description": "Logout realizado com sucesso"
+        },
+        "401": {
+          "description": "Token não fornecido ou já invalidado"
+        }
+      }
+    }
   }
 };

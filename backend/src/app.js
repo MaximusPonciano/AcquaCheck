@@ -4,12 +4,17 @@ import helmet from "helmet";
 import { config, messages } from "./config/constants.js";
 import apiRoutes from "./routes/index.js";
 
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocument } from "./docs/index.js";
+
 const app = express();  
 
 app.use(helmet()); 
 
 app.use(cors({ origin: config.server.corsOrigin }));
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use("/", apiRoutes);
 

@@ -91,7 +91,7 @@ Quase todas as rotas da aplicação são protegidas por autenticação.
    ```json
    {
      "email": "admin@acquacheck.com",
-     "password": "SUA_SENHA_AQUI"
+     "password": "31599499"
    }
    ```
 2. **Capture o Token JWT:**

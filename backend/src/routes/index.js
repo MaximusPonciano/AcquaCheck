@@ -9,7 +9,7 @@ import checklistRoutes from "./checklist.routes.js";
 
 const router = express.Router();
 
-router.use("/", authRoutes);
+router.use("/", authRoutes);        
 router.use(config.api.prefixUser, userRoutes);
 router.use(config.api.prefixAttraction, attractionRoutes);
 router.use(config.api.prefixQuestion, questionRoutes);

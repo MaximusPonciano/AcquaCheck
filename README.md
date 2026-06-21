@@ -82,6 +82,24 @@ A arquitetura do banco suporta a regra de negócios via Sequelize e contempla o 
 
 Temos as rotas completas de **CRUD (Create, Read, Update, Delete)** cobrindo as 5 manipulações básicas para as entidades.
 
+### 📋 Entidades e Regras de Negócio (Endpoints)
+
+A API modela o ecossistema real de segurança de um parque aquático, possuindo regras operacionais específicas:
+
+1. **Usuários (`/users`)**
+   - **Regra de Segurança:** A rota de criação (`POST /users`) não é pública. Diferente de um e-commerce, um funcionário não "cria sua própria conta". Ele deve ser **cadastrado por um Administrador**. Isso garante o controle de acesso irrestrito aos sistemas de vistoria.
+
+2. **Atrações (`/attractions`)**
+   - **Controle Operacional:** Representa as estruturas físicas do parque (Toboáguas, Piscinas).
+   - Permite que o parque adicione novos equipamentos, altere status (ex: Manutenção) ou os desative.
+
+3. **Questões (`/questions`)**
+   - **Base de Conhecimento:** Banco de perguntas técnicas padronizadas (ex: *"O nível de cloro está adequado?"*, *"As travas de segurança estão firmes?"*).
+
+4. **Checklists e Tabela Pivô (`/checklists`)**
+   - **O Coração da Aplicação:** É a entidade que garante a rastreabilidade diária. Um inspetor abre um *Checklist* atrelado a uma Atração específica.
+   - **Relação N:N (ItemChecklist):** Através da nossa tabela pivô, vinculamos *várias Questões* a um único *Checklist*, armazenando a resposta exata da vistoria daquele dia. Isso previne acidentes e serve como auditoria legal.
+
 ### Como Logar e Usar o Token JWT
 
 Quase todas as rotas da aplicação são protegidas por autenticação.

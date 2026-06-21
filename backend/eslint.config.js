@@ -21,5 +21,18 @@ export default [
       "no-unused-vars": "warn",
       "no-console": "off"
     }
+  },
+  {
+    files: ["**/*.cjs"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        require: "readonly",
+        module: "writable",
+        __dirname: "readonly",
+        __filename: "readonly",
+        exports: "writable"
+      }
+    }
   }
 ];

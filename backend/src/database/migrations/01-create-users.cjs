@@ -44,7 +44,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     // Desfaz as alterações (Deleta a tabela inteira)
     await queryInterface.dropTable('users');
   }

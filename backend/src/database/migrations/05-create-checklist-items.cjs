@@ -1,44 +1,40 @@
-/* eslint-disable no-undef */
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('checklists', {
+    await queryInterface.createTable('checklist_items', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
       },
-      user_id: {
+      checklist_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'users',
+          model: 'checklists',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT' 
+        onDelete: 'CASCADE',
+        unique: 'uq_checklist_question'
       },
-      attraction_id: {
+      question_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'attractions',
+          model: 'questions',
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT' 
+        onDelete: 'CASCADE',
+        unique: 'uq_checklist_question'
       },
-      date_time: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      },
-      notes: {
-        type: Sequelize.TEXT,
-        allowNull: true
+      compliant: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -47,16 +43,11 @@ module.exports = {
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false
-      },
-      deleted_at: {
-        type: Sequelize.DATE,
-        allowNull: true,
-        defaultValue: null
       }
     });
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable('checklists');
+    await queryInterface.dropTable('checklist_items');
   }
 };

@@ -28,7 +28,7 @@ const ItemChecklist = sequelize.define(
   },
   {
     tableName: "checklist_items",
-    timestamps: false,
+    timestamps: true,
   },
 );
 

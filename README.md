@@ -51,17 +51,24 @@ Antes de rodar a aplicação, você precisa definir as variáveis de ambiente ba
 2. Renomeie (ou duplique) o arquivo `.env.example` para `.env`.
 3. Mantenha as configurações padrões que já estão lá. Elas coincidem com as credenciais que o Docker Compose criará.
 
-### 2. Subindo a Arquitetura
+### 2. Subindo a Arquitetura (Automação CI/CD)
 
-Na **raiz do projeto**, execute o comando oficial de subida:
+Na **raiz do projeto**, nós fornecemos um script oficial de automação (`deploy.sh`) que orquestra todo o ambiente de forma contínua e segura. Ele limpa volumes antigos, constrói a imagem de forma otimizada (`npm ci`), aguarda o *healthcheck* do PostgreSQL e roda as migrations automaticamente.
+
+Basta executar no seu terminal (Git Bash, WSL, Linux ou Mac):
 
 ```bash
-docker-compose up -d --build
+bash deploy.sh
 ```
 
-> _(Caso você utilize a sintaxe nova do docker, o comando `docker compose up --build` também funcionará com perfeição)._
+**Alternativa: Subida Manual Passo a Passo**
 
-Este comando irá compilar a imagem Node.js otimizada e instanciar toda a topologia de rede e os bancos de dados em segundo plano.
+Se você preferir rodar os processos manualmente sem a automação do script, é altamente recomendado limpar os volumes e redes antigas antes de iniciar a nova compilação:
+
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
 
 ### 3. Migrations Automáticas vs Manuais
 

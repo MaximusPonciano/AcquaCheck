@@ -21,6 +21,8 @@ A aplicação backend foi desenhada para atender (e superar) os requisitos técn
 
 ## Arquitetura do Sistema e Containers
 
+![Fluxo de Requisição e Arquitetura do AcquaCheck](./assets/arquitetura.png)
+
 A aplicação roda em um ambiente completamente conteinerizado, respeitando o princípio de isolamento e segurança perimetral. A arquitetura segue o fluxo restrito:
 
 **`Host -> Nginx -> Node Web Server -> PostgreSQL`**

@@ -80,10 +80,11 @@ Para monitorar a saúde dos serviços:
   ```bash
   docker-compose down -v
   ```
-
-  # Link do drive: https://drive.google.com/file/d/1TR3EFRYFKVEheDSKXtHXC1adGE7GTXiQ/view 
+ 
 - **Rebuild Forçado:**
   Se precisar invalidar o cache de build das imagens do Docker:
   ```bash
   docker-compose build --no-cache
   ```
+
+  # Link do drive: https://drive.google.com/file/d/1TR3EFRYFKVEheDSKXtHXC1adGE7GTXiQ/view
